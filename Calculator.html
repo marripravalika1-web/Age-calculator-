@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="ux9T1PzOuA05XXt_WqnMW7Cx4EXLeJ4ZJTCjAX-FqEA" />
+<title>Age Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6a5cff, #00c6ff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 430px;
+    background: white;
+    border-radius: 25px;
+    padding: 30px 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-top: 0;
+}
+
+.subtitle {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.date-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.date-box input {
+    width: 100%;
+    padding: 14px 8px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 17px;
+    text-align: center;
+    outline: none;
+}
+
+.date-box input:focus {
+    border-color: #6a5cff;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #6a5cff, #00aaff);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.result {
+    display: none;
+    margin-top: 25px;
+}
+
+.age-box {
+    display: flex;
+    gap: 10px;
+}
+
+.age-item {
+    flex: 1;
+    background: #f2f5ff;
+    border-radius: 15px;
+    padding: 15px 5px;
+}
+
+.age-number {
+    font-size: 28px;
+    font-weight: bold;
+    color: #5b4cff;
+}
+
+.age-label {
+    color: #666;
+    font-size: 13px;
+}
+
+.total {
+    margin-top: 20px;
+    background: #f8f8f8;
+    border-radius: 15px;
+    padding: 15px;
+    color: #444;
+}
+
+.error {
+    color: #e53935;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.footer {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎂 Age Calculator</h1>
+
+<p class="subtitle">
+Enter your date of birth
+</p>
+
+<div class="date-box">
+
+<input
+type="text"
+id="day"
+placeholder="DD"
+maxlength="2"
+inputmode="numeric">
+
+<input
+type="text"
+id="month"
+placeholder="MM"
+maxlength="2"
+inputmode="numeric">
+
+<input
+type="text"
+id="year"
+placeholder="YYYY"
+maxlength="4"
+inputmode="numeric">
+
+</div>
+
+<button onclick="calculateAge()">
+Calculate Age
+</button>
+
+<div id="error" class="error"></div>
+
+<div id="result" class="result">
+
+<h2>Your Age</h2>
+
+<div class="age-box">
+
+<div class="age-item">
+<div id="years" class="age-number">0</div>
+<div class="age-label">Years</div>
+</div>
+
+<div class="age-item">
+<div id="months" class="age-number">0</div>
+<div class="age-label">Months</div>
+</div>
+
+<div class="age-item">
+<div id="days" class="age-number">0</div>
+<div class="age-label">Days</div>
+</div>
+
+</div>
+
+<div class="total">
+<strong>Total days:</strong>
+<span id="totalDays">0</span>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 Age Calculator
+</div>
+
+</div>
+
+<script>
+
+function calculateAge() {
+
+const day = parseInt(document.getElementById("day").value);
+const month = parseInt(document.getElementById("month").value);
+const year = parseInt(document.getElementById("year").value);
+
+const error = document.getElementById("error");
+const result = document.getElementById("result");
+
+error.textContent = "";
+result.style.display = "none";
+
+if (!day || !month || !year) {
+    error.textContent = "Please enter DD, MM and YYYY.";
+    return;
+}
+
+if (month < 1 || month > 12) {
+    error.textContent = "Please enter a valid month.";
+    return;
+}
+
+if (day < 1 || day > 31) {
+    error.textContent = "Please enter a valid day.";
+    return;
+}
+
+if (year < 1900 || year > new Date().getFullYear()) {
+    error.textContent = "Please enter a valid year.";
+    return;
+}
+
+const birthDate = new Date(year, month - 1, day);
+const today = new Date();
+
+if (
+    birthDate.getDate() !== day ||
+    birthDate.getMonth() !== month - 1 ||
+    birthDate.getFullYear() !== year
+) {
+    error.textContent = "Please enter a valid date.";
+    return;
+}
+
+if (birthDate > today) {
+    error.textContent = "Date of birth cannot be in the future.";
+    return;
+}
+
+let years = today.getFullYear() - year;
+let months = today.getMonth() - (month - 1);
+let days = today.getDate() - day;
+
+if (days < 0) {
+
+    months--;
+
+    const previousMonth =
+        new Date(today.getFullYear(), today.getMonth(), 0);
+
+    days += previousMonth.getDate();
+}
+
+if (months < 0) {
+    years--;
+    months += 12;
+}
+
+const difference = today - birthDate;
+
+const totalDays = Math.floor(
+    difference / (1000 * 60 * 60 * 24)
+);
+
+document.getElementById("years").textContent = years;
+document.getElementById("months").textContent = months;
+document.getElementById("days").textContent = days;
+
+document.getElementById("totalDays").textContent =
+    totalDays.toLocaleString();
+
+result.style.display = "block";
+
+}
+
+</script>
+
+</body>
+</html>
